@@ -1,5 +1,5 @@
 
-import { Component } from 'react';
+import { useState } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { Section } from './Section/Section';
 import {FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
@@ -8,43 +8,51 @@ import { Notification } from './Notification/Notification';
 import { AppWrapper } from './App.styled';
 
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export const App = () => {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
+  const countTotalFeedback = () => {
+    
     return good + neutral + bad;
   };
 
-  countPositiveFeedback() {
-    return this.countTotalFeedback() === 0
+  const countPositiveFeedback = () => {
+    return countTotalFeedback() === 0
       ? 0
-      : Math.round((this.state.good / this.countTotalFeedback()) * 100);
+      : Math.round((good / countTotalFeedback()) * 100);
   }
 
-  hadlerFeedback = type => {
-    this.setState(prevState => {
-      return {
-        [type]: prevState[type] + 1,
-      };
-    });
+   const hadlerFeedback = type => {
+   switch (type) {
+      case 'good':
+        setGood(good + 1);
+        break;
+      case 'neutral':
+        setNeutral(neutral + 1);
+        break;
+      case 'bad':
+        setBad(bad + 1);
+        break;
+
+      default:
+        break;
+    }
   };
 
-  render() {
-    const { good, neutral, bad } = this.state;
-    const options = ['good', 'neutral', 'bad'];
-    const total = this.countTotalFeedback();
-    const positivePercentage = this.countPositiveFeedback();
+  const options = ['good', 'neutral', 'bad'];
+  const total = countTotalFeedback();
+  const positivePercentage = countPositiveFeedback();
+
+
+ 
     return (
       <AppWrapper>
         <Section title="Please leave feedback">
           <FeedbackOptions
             options={options}
-            onLeaveFeedback={this.hadlerFeedback}
+            onLeaveFeedback={hadlerFeedback}
           />
         </Section>
 
@@ -64,5 +72,5 @@ export class App extends Component {
         <GlobalStyle/>
       </AppWrapper>
     );
-  }
+  
 }
